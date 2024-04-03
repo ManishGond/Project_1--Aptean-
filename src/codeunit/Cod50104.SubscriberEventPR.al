@@ -20,6 +20,7 @@ codeunit 50105 SubscriberEventPR_2
         PRTable.Status := PRTable.Status::Released;
         Message('Approved!');
 
+
     end;
 
     var

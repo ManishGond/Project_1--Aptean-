@@ -24,6 +24,11 @@ page 50103 "Requests to Approve Card"
                     ToolTip = 'Specifies the record that you are requested to approve. On the Home tab, in the Process group, choose Record to view the record on a new page where you can also act on the approval request.';
                     Width = 30;
                 }
+                field("Document No."; Rec."Document No.")
+                {
+                    ApplicationArea = All;
+
+                }
                 field(Details; rec.RecordDetails)
                 {
                     ApplicationArea = Suite;
@@ -174,7 +179,7 @@ page 50103 "Requests to Approve Card"
                     ApprovalEntry: Record "Approval Entry";
                     ApprovalsMgmt: Codeunit "Approvals Mgmt.";
                     ApprovalRequest: Codeunit PublisherEventPR;
-                    PRTableRequest: Record PRTable;
+                    PRTable: Record PRTable;
                 //NewStatus: Record "GA PR Subform Table";
 
                 begin
@@ -182,12 +187,13 @@ page 50103 "Requests to Approve Card"
                     ApprovalsMgmt.ApproveApprovalRequests(ApprovalEntry);
 
 
-                    PRTableRequest.SetRange(DocumentNo, ApprovalEntry."Document No.");
-                    PRTableRequest.FindSet();
+                    PRTable.SetRange(DocumentNo, ApprovalEntry."Document No.");
+                    PRTable.FindSet();
                     REPEAT
-                        PRTableRequest.Status := PRTableRequest.Status::Released;
-                        PRTableRequest.Modify();
-                    UNTIL PRTableRequest.Next() = 0;
+                        PRTable.Status := PRTable.Status::Released;
+                        PRTable.ReleasedDate := DT2Date(CurrentDateTime);
+                        PRTable.Modify();
+                    UNTIL PRTable.Next() = 0;
 
                     //NewStatus.SetRange(DocumentNo, ApprovalEntry."Document No.");
                     // NewStatus.FindSet();
@@ -284,6 +290,8 @@ page 50103 "Requests to Approve Card"
     trigger OnAfterGetRecord()
     begin
         SetDateStyle;
+
+
     end;
 
     trigger OnOpenPage()
