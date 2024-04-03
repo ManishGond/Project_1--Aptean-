@@ -65,6 +65,8 @@ page 50105 CreatePRSubformCard
                 field("Deptt Code"; Rec.DeptCode)
                 {
                     ApplicationArea = All;
+                    NotBlank = true;
+                    ShowMandatory = true;
 
                 }
                 field("Sub Account Code"; Rec.SubAccountCode)
@@ -228,6 +230,7 @@ page 50105 CreatePRSubformCard
         PRTable.FindSet();
         Rec.UserId := PRTable.CreatorID;
         Rec.RequestorName := PRTable.CreatorName;
+        Rec.DateNeeded := PRTable.ReleasedDate;
         Rec.Modify();
     end;
 }

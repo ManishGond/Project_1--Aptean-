@@ -112,11 +112,13 @@ page 50104 CreatePRCard
                         RequestToApproveTable."Approver ID" := UserId;
                         RequestToApproveTable.Status := RequestToApproveTable.Status::Open;
                         RequestToApproveTable.Insert(true);
+                        Commit();
 
                         Rec.Find();
                         // Updating the card 
                         Rec.Status := Rec.Status::Pending;
                         Rec.RequestorName := UserId;
+                        Commit();
 
                         // and SubFormLink Card
                         // PRSubformTable.Status := PRSubformTable.Status::Pending;
@@ -124,6 +126,8 @@ page 50104 CreatePRCard
                         //Calling the subscriber
                         ApprovalRequestPublisher.SentApproval();
                         Rec.Modify();
+
+                        Commit();
 
                     end;
 
@@ -138,6 +142,27 @@ page 50104 CreatePRCard
                     ToolTip = 'Cancel Request approval of the document.';
                 }
 
+            }
+
+            group(Report)
+            {
+                Image = Report2;
+                action(GenerateReport)
+                {
+                    Caption = 'Generate Report';
+                    Image = Report;
+                    ApplicationArea = All;
+
+                    trigger OnAction()
+                    var
+                        PRTable: Record PRTable;
+                    begin
+                        PRTable.SetFilter(DocumentNo, Rec.DocumentNo);
+                        Commit();
+                        Report.Run(Report::ReportGeneration, true, true, PRTable);
+                        Commit();
+                    end;
+                }
             }
         }
     }
@@ -157,6 +182,7 @@ page 50104 CreatePRCard
     var
         StatusStyleTxt: Text;
         PRTable: Record PRTable;
+        PRSubForTable: Record PRSubformTable;
 
     trigger OnAfterGetRecord()
     begin
@@ -166,7 +192,9 @@ page 50104 CreatePRCard
         Rec.CreatorID := UserId;
         Rec.CreatorName := CompanyName;
         Rec.DocumentDate := DT2Date(CurrentDateTime);
+
         Rec.Modify();
+        Commit();
     end;
 
     procedure GetStatusStyleText() StatusStyleText: Text
