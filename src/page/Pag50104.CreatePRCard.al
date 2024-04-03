@@ -106,19 +106,19 @@ page 50104 CreatePRCard
 
 
                     begin
-                        //Request to approval card
+                        // Request to approval card
                         RequestToApproveTable."Document No." := Rec.DocumentNo;
                         RequestToApproveTable."Sender ID" := UserId;
                         RequestToApproveTable."Approver ID" := UserId;
-
                         RequestToApproveTable.Status := RequestToApproveTable.Status::Open;
                         RequestToApproveTable.Insert(true);
 
                         Rec.Find();
-                        //Updating the card 
+                        // Updating the card 
                         Rec.Status := Rec.Status::Pending;
+                        Rec.RequestorName := UserId;
 
-                        // //and subformlink card
+                        // and SubFormLink Card
                         // PRSubformTable.Status := PRSubformTable.Status::Pending;
 
                         //Calling the subscriber
