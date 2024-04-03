@@ -1,6 +1,9 @@
 table 50100 PRTable
 {
     DataClassification = ToBeClassified;
+    LookupPageId = CreatePRCard;
+    DataCaptionFields = DocumentNo, RequestorName;
+    DrillDownPageID = CreatePRCard;
 
     fields
     {
@@ -8,7 +11,6 @@ table 50100 PRTable
         {
             Caption = 'Document No.';
             DataClassification = ToBeClassified;
-            Editable = false;
 
             trigger OnValidate()
             begin
@@ -38,9 +40,11 @@ table 50100 PRTable
             TableRelation = Location.Code;
             DataClassification = ToBeClassified;
         }
-        field(6; Status; Enum Status)
+        field(6; "Status"; Option)
         {
+            Caption = 'Status';
             Editable = false;
+            OptionMembers = Open,Released,Pending;
             DataClassification = ToBeClassified;
         }
         field(7; DocumentDate; Date)
@@ -89,30 +93,4 @@ table 50100 PRTable
             Clustered = true;
         }
     }
-
-    var
-        myInt: Integer;
-
-
-
-    trigger OnInsert()
-    begin
-
-    end;
-
-    trigger OnModify()
-    begin
-
-    end;
-
-    trigger OnDelete()
-    begin
-
-    end;
-
-    trigger OnRename()
-    begin
-
-    end;
-
 }

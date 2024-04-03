@@ -16,11 +16,7 @@ page 50104 CreatePRCard
                     ShowMandatory = true;
                     ApplicationArea = All;
                     NotBlank = true;
-                    Editable = false;
-
                     trigger OnAssistEdit()
-                    var
-                        NoSeries: Record "No. Series";
                     begin
                         if AssistEdit(xRec) then
                             CurrPage.Update();
@@ -73,28 +69,84 @@ page 50104 CreatePRCard
                     ApplicationArea = All;
                 }
             }
+            part(OpenPurchaseReqLine; CreatePRSubformCard)
+            {
+                ApplicationArea = All;
+                SubPageLink = DocumentNo = field(DocumentNo);
+                SubPageView = order(ascending);
+            }
+
         }
+
     }
+
 
     actions
     {
         area(Processing)
         {
-            action(ActionName)
+            group("Request Approval")
             {
-                ApplicationArea = All;
+                Caption = 'Request Approval';
+                Image = Alerts;
+                action(SendApprovalRequest)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Send A&pproval Request';
+                    Enabled = true;
+                    Image = SendApprovalRequest;
+                    ToolTip = 'Request approval of the document.';
 
-                trigger OnAction()
-                begin
+                    trigger OnAction()
+                    var
+                        RequestToApprove: Page "Requests to Approve Card";
+                        RequestToApproveTable: Record "Approval Entry";
+                        ApprovalRequestPublisher: Codeunit PublisherEventPR_2;
+                        PRSubformTable: Record PRSubformTable;
 
-                end;
+
+                    begin
+                        //Request to approval card
+                        RequestToApproveTable."Document No." := Rec.DocumentNo;
+                        RequestToApproveTable."Sender ID" := UserId;
+                        RequestToApproveTable."Approver ID" := UserId;
+
+                        RequestToApproveTable.Status := RequestToApproveTable.Status::Open;
+                        RequestToApproveTable.Insert(true);
+
+                        Rec.Find();
+                        //Updating the card 
+                        Rec.Status := Rec.Status::Pending;
+
+                        // //and subformlink card
+                        // PRSubformTable.Status := PRSubformTable.Status::Pending;
+
+                        //Calling the subscriber
+                        ApprovalRequestPublisher.SentApproval();
+                        Rec.Modify();
+
+                    end;
+
+
+                }
+                action(CancelApprovalRequest)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Cancel Send Approval Request';
+                    Enabled = true;
+                    Image = SendApprovalRequest;
+                    ToolTip = 'Cancel Request approval of the document.';
+                }
+
             }
         }
     }
 
-    procedure AssistEdit(OldPR: Record PRTable): Boolean
     var
         NoSeriesMgt: Codeunit NoSeriesManagement;
+
+    procedure AssistEdit(OldPR: Record PRTable): Boolean
+
     begin
         if NoSeriesMgt.SelectSeries('GA-DE-PR', OldPR.DocumentNo, Rec.DocumentNo) then begin
             NoSeriesMgt.SetSeries(Rec.DocumentNo);
@@ -106,26 +158,23 @@ page 50104 CreatePRCard
         StatusStyleTxt: Text;
         PRTable: Record PRTable;
 
-    trigger OnOpenPage()
-    var
-        myInt: Integer;
-    begin
-        Rec.FindSet();
-        Rec.CreatorID := UserId;
-        Rec.CreatorName := CompanyName;
-        Rec.Modify();
-    end;
-
-    trigger OnAfterGetCurrRecord()
+    trigger OnAfterGetRecord()
     begin
 
         StatusStyleTxt := GetStatusStyleText();
+        Rec.Find();
+        Rec.CreatorID := UserId;
+        Rec.CreatorName := CompanyName;
+        Rec.DocumentDate := DT2Date(CurrentDateTime);
+        Rec.Modify();
     end;
 
     procedure GetStatusStyleText() StatusStyleText: Text
     begin
         if Rec.Status = Rec.Status::Open then
             StatusStyleText := 'Favorable'
+        else if Rec.Status = Rec.Status::Pending then
+            StatusStyleText := 'Ambiguous'
         else
             StatusStyleText := 'Strong';
 
