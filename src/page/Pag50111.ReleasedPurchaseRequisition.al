@@ -73,19 +73,19 @@ page 50111 ReleasedPurchaseRequisition
 
     trigger OnQueryClosePage(CloseAction: Action): Boolean
     var
-        PurchaseOrderSub: Record PurchaseOrderSubform;
-        PurchaseOrder: Record PurchaseOrder;
+        PurchLine: Record "Purchase Line";
+        PurchHeader: Record "Purchase Header";
     begin
-        IF CloseAction = Action::OK then begin
-            Message('%1', Rec.ItemNo);
-            PurchaseOrderSub.Type := Rec.Type;
-            // PurchaseOrderSub.LineNo := Rec.ItemNo;
-            // PurchaseOrderSub.PrNo := Rec.DocumentNo;
-            // PurchaseOrderSub.Insert(true);
+        if CloseAction = Action::OK then begin
+            PurchLine.SetRange(Type, rec.Type);
+            PurchLine.FindSet();
+            PurchLine."Document No." := rec.DocumentNo;
+            PurchHeader.Insert(true);
 
-
-            Message('%1', PurchaseOrderSub.Type);
-            PurchaseOrderSub.Insert(true);
+        end
+        else begin
+            Message('Exited!');
+            exit(true);
         end;
     end;
 }
