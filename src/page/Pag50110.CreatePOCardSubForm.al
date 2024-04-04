@@ -1,8 +1,6 @@
 page 50110 CreatePOCardSubForm
 {
     PageType = ListPart;
-    ApplicationArea = All;
-    UsageCategory = Administration;
     SourceTable = PurchaseOrderSubform;
     DelayedInsert = true;
     LinksAllowed = false;
@@ -25,9 +23,16 @@ page 50110 CreatePOCardSubForm
                     ApplicationArea = All;
 
                 }
-                field(PrNo; Rec.PrNo)
+                field(DocumentNo; Rec.DocumentNo)
                 {
                     ApplicationArea = All;
+
+                }
+                field(PrNo; Rec.PrNo)
+                {
+                    Visible = true;
+                    ApplicationArea = All;
+                    Editable = false;
 
                 }
                 field(UnitOfMeasure; Rec.UnitOfMeasure)
@@ -64,26 +69,9 @@ page 50110 CreatePOCardSubForm
     {
         area(Processing)
         {
-            action(ActionName)
-            {
-                ApplicationArea = All;
 
-                trigger OnAction()
-                begin
-
-                end;
-            }
         }
     }
 
-
-    trigger OnAfterGetRecord()
-    var
-        PurchaseOrder: Record PurchaseOrder;
-    begin
-        // PurchaseOrder.FindSet();
-        // Rec.PrNo := PurchaseOrder.No;
-        // PurchaseOrder.Modify();
-    end;
 
 }

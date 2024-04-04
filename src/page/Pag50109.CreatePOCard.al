@@ -113,7 +113,7 @@ page 50109 CreatePOCard
                         Commit();
 
                         // and SubFormLink Card
-                        // PRSubformTable.Status := PRSubformTable.Status::Pending;
+                        PRSubformTable.Status := PRSubformTable.Status::Pending;
 
                         //Calling the subscriber
                         ApprovalRequestPublisher.SentApproval();
@@ -153,6 +153,23 @@ page 50109 CreatePOCard
                         Commit();
                         Report.Run(Report::ReportGeneration, true, true, PRTable);
                         Commit();
+                    end;
+                }
+            }
+
+            group(Items)
+            {
+                action(GetPRLines)
+                {
+                    Caption = 'Get PR Lines';
+                    Image = GetLines;
+                    ApplicationArea = All;
+
+                    trigger OnAction()
+                    var
+                        ReleasedPR: Page ReleasedPurchaseRequisition;
+                    begin
+                        ReleasedPR.Run();
                     end;
                 }
             }

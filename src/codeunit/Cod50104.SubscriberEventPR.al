@@ -25,4 +25,5 @@ codeunit 50105 SubscriberEventPR_2
 
     var
         PRTable: Record PRTable;
+        SubformTable: Record PRSubformTable;
 }

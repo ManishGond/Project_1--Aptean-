@@ -34,7 +34,14 @@ page 50105 CreatePRSubformCard
                 }
                 field("Item No"; Rec.ItemNo)
                 {
+                    ShowMandatory = true;
                     ApplicationArea = All;
+                    NotBlank = true;
+                    trigger OnAssistEdit()
+                    begin
+                        if AssistEdit(xRec) then
+                            CurrPage.Update();
+                    end;
                 }
                 field("Unit Of Measure Code"; Rec.UnitOfMeasure)
                 {
@@ -83,6 +90,12 @@ page 50105 CreatePRSubformCard
                 {
                     ApplicationArea = All;
                 }
+                field(Status; Rec.Status)
+                {
+                    ApplicationArea = All;
+                }
+
+
 
 
             }
@@ -233,4 +246,17 @@ page 50105 CreatePRSubformCard
         Rec.DateNeeded := PRTable.ReleasedDate;
         Rec.Modify();
     end;
+
+    procedure AssistEdit(OldPR: Record PRSubformTable): Boolean
+
+    begin
+        if NoSeriesMgt.SelectSeries('GA', OldPR.ItemNo, Rec.ItemNo) then begin
+            NoSeriesMgt.SetSeries(Rec.ItemNo);
+            exit(true);
+        end;
+    end;
+
+    var
+        NoSeriesMgt: Codeunit NoSeriesManagement;
+
 }

@@ -180,7 +180,7 @@ page 50103 "Requests to Approve Card"
                     ApprovalsMgmt: Codeunit "Approvals Mgmt.";
                     ApprovalRequest: Codeunit PublisherEventPR;
                     PRTable: Record PRTable;
-                //NewStatus: Record "GA PR Subform Table";
+                    PRSubforTable: Record PRSubformTable;
 
                 begin
                     CurrPage.SetSelectionFilter(ApprovalEntry);
@@ -195,12 +195,12 @@ page 50103 "Requests to Approve Card"
                         PRTable.Modify();
                     UNTIL PRTable.Next() = 0;
 
-                    //NewStatus.SetRange(DocumentNo, ApprovalEntry."Document No.");
-                    // NewStatus.FindSet();
-                    // REPEAT
-                    //     NewStatus.Status := NewStatus.Status::Released;
-                    //     NewStatus.Modify();
-                    // UNTIL NewStatus.Next() = 0;
+                    PRSubforTable.SetRange(DocumentNo, ApprovalEntry."Document No.");
+                    PRSubforTable.FindSet();
+                    REPEAT
+                        PRSubforTable.Status := PRSubforTable.Status::Released;
+                        PRSubforTable.Modify();
+                    UNTIL PRSubforTable.Next() = 0;
 
                     ApprovalRequest.StatusChange(ApprovalEntry);
                 end;

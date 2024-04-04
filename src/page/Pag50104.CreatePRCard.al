@@ -118,10 +118,10 @@ page 50104 CreatePRCard
                         // Updating the card 
                         Rec.Status := Rec.Status::Pending;
                         Rec.RequestorName := UserId;
-                        Commit();
 
                         // and SubFormLink Card
-                        // PRSubformTable.Status := PRSubformTable.Status::Pending;
+                        PRSubformTable.Status := PRSubformTable.Status::Pending;
+                        Commit();
 
                         //Calling the subscriber
                         ApprovalRequestPublisher.SentApproval();

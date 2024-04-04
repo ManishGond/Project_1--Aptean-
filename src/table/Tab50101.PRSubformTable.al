@@ -15,8 +15,15 @@ table 50101 PRSubformTable
         }
         field(3; ItemNo; Code[50])
         {
+
             Caption = 'Item No';
-            DataClassification = ToBeClassified;
+            NotBlank = true;
+            trigger OnValidate()
+            begin
+                if ItemNo <> xRec.ItemNo then begin
+                    ItemNo := '';
+                end;
+            end;
         }
         field(4; DocumentNo; Code[50])
         {
@@ -68,10 +75,10 @@ table 50101 PRSubformTable
             DataClassification = ToBeClassified;
             OptionMembers = Test,Live;
         }
-        field(16; Status; Option)
+        field(16; Status; Enum Status)
         {
             DataClassification = ToBeClassified;
-            OptionMembers = Open,Pending,Released;
+            // OptionMembers = Open,Pending,Released;
             Editable = false;
         }
     }

@@ -4,18 +4,22 @@ table 50103 PurchaseOrderSubform
 
     fields
     {
-        field(1; Type; Enum DocumentTypePO)
+        field(1; Type; Enum Type)
         {
             DataClassification = ToBeClassified;
-            Editable = false;
         }
-        field(2; LineNo; Integer)
+        field(2; LineNo; Code[50])
         {
             Caption = 'No.';
             DataClassification = ToBeClassified;
             Editable = false;
         }
-        field(3; PrNo; Code[50])
+        field(3; DocumentNo; Code[50])
+        {
+            DataClassification = ToBeClassified;
+            Editable = false;
+        }
+        field(9; PrNo; Code[50])
         {
             DataClassification = ToBeClassified;
             Editable = false;
