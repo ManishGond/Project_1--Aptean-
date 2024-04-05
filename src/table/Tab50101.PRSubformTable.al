@@ -81,11 +81,12 @@ table 50101 PRSubformTable
             // OptionMembers = Open,Pending,Released;
             Editable = false;
         }
+
     }
 
     keys
     {
-        key(Pk; DocumentNo, LineNo)
+        key(Pk; DocumentNo, LineNo, Type)
         {
             Clustered = true;
         }

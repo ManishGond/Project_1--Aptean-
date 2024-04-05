@@ -70,22 +70,4 @@ page 50111 ReleasedPurchaseRequisition
     begin
         Rec.SetFilter(Status, 'Released');
     end;
-
-    trigger OnQueryClosePage(CloseAction: Action): Boolean
-    var
-        PurchLine: Record "Purchase Line";
-        PurchHeader: Record "Purchase Header";
-    begin
-        if CloseAction = Action::OK then begin
-            PurchLine.SetRange(Type, rec.Type);
-            PurchLine.FindSet();
-            PurchLine."Document No." := rec.DocumentNo;
-            PurchHeader.Insert(true);
-
-        end
-        else begin
-            Message('Exited!');
-            exit(true);
-        end;
-    end;
 }

@@ -26,14 +26,22 @@ pageextension 50100 PurchaseOrder extends "Purchase Order"
 
                 trigger OnAction()
                 var
-                    table: Record PRSubformTable;
+                    PRSubformTable: Record PRSubformTable;
                     test: Boolean;
+                    ReleasePurchaseReq: Page ReleasedPurchaseRequisition;
                 begin
 
-                    table.SetRange(Status, table.Status::Released);
+                    PRSubformTable.SetRange(Status, PRSubformTable.Status::Released);
+                    ReleasePurchaseReq.LookupMode(true);
+                    if ReleasePurchaseReq.RunModal() = Action::LookupOK then begin
+                        rec.SetFilter("Document No.", PRSubformTable.DocumentNo);
+                        rec."Document Type" := PRSubformTable.Type;
+                        rec."Posting Description" := PRSubformTable.Description;
+                        rec."No." := PRSubformTable.ItemNo;
+                        rec.Modify(true);
+                    end;
 
-                    table.FindSet(test);
-                    Page.Run(Page::ReleasedPurchaseRequisition, table);
+                    PRSubformTable.FindSet(test);
 
                 end;
 
