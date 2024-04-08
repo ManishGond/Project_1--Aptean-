@@ -5,11 +5,7 @@ pageextension 50100 PurchaseOrder extends "Purchase Order"
     {
         addafter("Buy-from Vendor Name")
         {
-            field("Document No."; Rec."Document No.")
-            {
-                ApplicationArea = All;
 
-            }
         }
     }
 
@@ -21,33 +17,43 @@ pageextension 50100 PurchaseOrder extends "Purchase Order"
             action("Get Pr lines")
             {
                 ApplicationArea = All;
-                Caption = 'Get PR Lines';
-                Enabled = true;
+                Caption = 'Select PR Items';
+                Ellipsis = true;
+                Image = NewItem;
 
                 trigger OnAction()
                 var
                     PRSubformTable: Record PRSubformTable;
-                    test: Boolean;
                     ReleasePurchaseReq: Page ReleasedPurchaseRequisition;
-                    PurchaseLines: Record "Purchase Line";
+                    PurchLine: Record "Purchase Line";
+
+                    SelectionFilter: Text;
                 begin
 
                     PRSubformTable.SetRange(Status, PRSubformTable.Status::Released);
+                    PRSubformTable.FindSet();
                     ReleasePurchaseReq.LookupMode(true);
                     if ReleasePurchaseReq.RunModal() = Action::LookupOK then begin
-                        // rec.SetFilter("Document No.", PRSubformTable.DocumentNo);
-                        // rec."Document Type" := PRSubformTable.Type;
-                        // rec."Posting Description" := PRSubformTable.Description;
-                        // rec."No." := PRSubformTable.ItemNo;
-                        // rec.Modify(true);
-
-
-                        CurrPage.SetSelectionFilter(PurchaseLines);
-                        //CurrPage.PurchLines.PAGE.LookupMode(PurchaseLines);
+                        PurchLine.SetRange("Document Type", Rec."Document Type"::Order);
+                        PurchLine.SetRange("Document No.", Rec."No.");
+                        if not PurchLine.FindSet() then begin
+                            PurchLine.Init();
+                            PurchLine."Line No." += 10000;
+                            PurchLine."Document Type" := Rec."Document Type";
+                            PurchLine."Document No." := Rec."No.";
+                            PurchLine.Type := PRSubformTable.Type;
+                            PurchLine."No." := PRSubformTable.ItemNo;
+                            PurchLine.Description := PRSubformTable.Description;
+                            PurchLine.Insert(true);
+                        end
+                        else
+                            if Confirm('Record already exists. Do you want to Modify the existing Record?', true) then BEGIN
+                                PurchLine.Type := PRSubformTable.Type;
+                                PurchLine."No." := PRSubformTable.ItemNo;
+                                PurchLine.Description := PRSubformTable.Description;
+                                PurchLine.Modify(true);
+                            end;
                     end;
-
-                    PRSubformTable.FindSet(test);
-
                 end;
 
             }
@@ -55,6 +61,11 @@ pageextension 50100 PurchaseOrder extends "Purchase Order"
         }
     }
 
-    var
-        myInt: Integer;
+
+
+
+
+
+
+
 }

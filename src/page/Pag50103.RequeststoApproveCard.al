@@ -223,6 +223,7 @@ page 50103 "Requests to Approve Card"
                 begin
                     CurrPage.SetSelectionFilter(ApprovalEntry);
                     ApprovalsMgmt.RejectApprovalRequests(ApprovalEntry);
+
                 end;
             }
             action(Delegate)
