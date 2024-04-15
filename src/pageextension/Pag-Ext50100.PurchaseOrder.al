@@ -43,7 +43,7 @@ pageextension 50100 PurchaseOrder extends "Purchase Order"
                         end;
                         PurchLine."Document Type" := Rec."Document Type";
                         PurchLine."Document No." := Rec."No.";
-                        ReleasePurchaseReq.GetRecord(PRSubformTable);
+                        ReleasePurchaseReq.GetRecord(PRSubformTable); //IMP
                         PurchLine.Type := PRSubformTable.Type;
                         PurchLine."No." := PRSubformTable.ItemNo;
                         PurchLine.Quantity := PRSubformTable.RequestorQuantity;
